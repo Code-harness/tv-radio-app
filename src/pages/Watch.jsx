@@ -117,7 +117,7 @@ export default function Watch() {
                   {/* Recommendation Thumbnail / Logo */}
                   <div className="w-24 h-16 bg-zinc-900 rounded-xl overflow-hidden flex-shrink-0 relative border border-white/5 p-2 flex items-center justify-center">
                     <img 
-                      src={item.logo} 
+                      src={item.thumbnail} 
                       alt="" 
                       className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => { e.target.src = "https://placehold.co/100x100/111/fff?text=TV"; }}
