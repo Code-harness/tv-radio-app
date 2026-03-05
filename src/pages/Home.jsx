@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer"
 import { Play, Radio, Code, Globe, Zap, Github } from "lucide-react";
 
 export default function Home() {
@@ -94,11 +95,7 @@ export default function Home() {
           </button>
         </div>
       </section>
-
-      {/* --- Simple Footer --- */}
-      <footer className="py-12 border-t border-white/5 text-center text-gray-600 text-sm">
-        <p>© 2024 TV + Radio Open Source Project. Licensed under MIT.</p>
-      </footer>
+      <Footer></Footer>
     </div>
   );
 }

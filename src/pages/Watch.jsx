@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Player from "../components/Player";
 import { fetchChannels } from "../services/api";
-import { Share2, Info, Flag, Heart, Users, ChevronRight } from "lucide-react";
+import { Share2, Info, Flag, Heart, Users, ChevronRight, Zap, Play } from "lucide-react";
 
 export default function Watch() {
   const { id } = useParams();
@@ -12,10 +12,32 @@ export default function Watch() {
 
   useEffect(() => {
     fetchChannels().then((data) => {
-      setChannel(data[id]);
-      // Grab a few other channels for the sidebar
-      setRecommendations(data.slice(0, 6));
+      // Mapping persistent IDs
+      const dataWithIds = data.map((item, index) => ({
+        ...item,
+        originalId: index,
+      }));
+
+      const current = dataWithIds.find((c) => c.originalId.toString() === id);
+      setChannel(current);
+
+      if (current) {
+        // Find channels in the same group (category)
+        let related = dataWithIds.filter(
+          (c) => c.group === current.group && c.originalId !== current.originalId
+        );
+
+        // Fallback: If not enough related, shuffle in others
+        if (related.length < 8) {
+          const others = dataWithIds.filter((c) => c.group !== current.group);
+          related = [...related, ...others.sort(() => 0.5 - Math.random())];
+        }
+
+        setRecommendations(related.slice(0, 12));
+      }
     });
+    
+    window.scrollTo(0, 0);
   }, [id]);
 
   if (!channel) return (
@@ -25,90 +47,93 @@ export default function Watch() {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-purple-500/30">
       <Navbar />
 
-      <main className="pt-20 pb-12 px-4 md:px-8 max-w-[1800px] mx-auto">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <main className="pt-24 pb-12 px-4 md:px-8 max-w-[1800px] mx-auto">
+        <div className="flex flex-col lg:flex-row gap-10">
           
-          {/* --- Main Player Column --- */}
+          {/* --- Main Player --- */}
           <div className="flex-1">
-            {/* Player Container with Ambient Glow */}
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-30 transition duration-1000"></div>
-              <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl border border-white/5 aspect-video">
-                <Player url={channel.stream} />
-              </div>
+            <div className="relative rounded-[2rem] overflow-hidden bg-black shadow-[0_0_50px_-12px_rgba(168,85,247,0.2)] border border-white/5 aspect-video">
+              <Player url={channel.stream} />
             </div>
 
-            {/* Stream Info Area */}
-            <div className="mt-6 flex flex-col md:flex-row md:items-start justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="bg-red-600 text-[10px] font-bold px-2 py-0.5 rounded tracking-wider uppercase">Live</span>
-                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{channel.name}</h1>
+            <div className="mt-8">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-6">
+                  {/* Channel Logo in Main View */}
+                  <div className="hidden sm:flex w-20 h-20 bg-zinc-900 rounded-2xl border border-white/10 items-center justify-center p-3 shrink-0">
+                    <img src={channel.logo} alt="" className="max-w-full max-h-full object-contain" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="flex items-center gap-1 bg-red-600 text-[10px] font-black px-2 py-0.5 rounded uppercase">
+                        Live
+                      </span>
+                      <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">{channel.group}</span>
+                    </div>
+                    <h1 className="text-3xl md:text-5xl font-black tracking-tighter italic uppercase">{channel.name}</h1>
+                  </div>
                 </div>
-                <div className="flex items-center gap-4 text-gray-400 text-sm">
-                  <span className="flex items-center gap-1.5 text-purple-400">
-                    <Users size={16} /> 2,842 watching
-                  </span>
-                  <span>•</span>
-                  <span>{channel.category || "General Content"}</span>
+
+                <div className="flex items-center gap-3">
+                  <button className="p-4 bg-zinc-900 rounded-2xl border border-white/5 hover:bg-zinc-800 transition-all">
+                    <Heart size={20} />
+                  </button>
+                  <button className="flex items-center gap-2 bg-white text-black px-6 py-4 rounded-2xl font-black text-sm hover:scale-105 transition-all">
+                    <Share2 size={18} /> SHARE
+                  </button>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-2">
-                <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-xl transition-all">
-                  <Heart size={18} /> <span className="hidden sm:inline">Save</span>
-                </button>
-                <button className="flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-xl transition-all">
-                  <Share2 size={18} /> <span className="hidden sm:inline">Share</span>
-                </button>
-                <button className="p-2 bg-white/5 border border-white/10 rounded-xl hover:text-red-500">
-                  <Flag size={18} />
-                </button>
+              <div className="mt-10 p-1 bg-gradient-to-r from-white/10 to-transparent rounded-[2.5rem]">
+                <div className="bg-[#0a0a0a] p-8 rounded-[2.4rem]">
+                   <h3 className="text-xs font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Broadcast Details</h3>
+                   <p className="text-zinc-400 text-lg leading-relaxed">
+                     You are currently watching <span className="text-white font-bold">{channel.name}</span>. 
+                     This stream is sourced via the <span className="text-purple-500">{channel.group}</span> network. 
+                     Experience ad-free, open-source streaming at its best.
+                   </p>
+                </div>
               </div>
-            </div>
-
-            {/* Description Box */}
-            <div className="mt-8 p-6 bg-zinc-900/50 border border-white/5 rounded-2xl">
-              <h3 className="font-semibold flex items-center gap-2 mb-2 text-gray-200">
-                <Info size={18} className="text-purple-500" /> About this stream
-              </h3>
-              <p className="text-gray-400 leading-relaxed text-sm md:text-base">
-                Broadcasting live from the {channel.name} network. Experience the best in 
-                digital streaming quality. This feed is part of the open-source TV+Radio 
-                initiative, providing decentralized access to global media.
-              </p>
             </div>
           </div>
 
-          {/* --- Right Sidebar: Recommendations --- */}
-          <div className="w-full lg:w-96">
-            <h2 className="text-xl font-bold mb-6 flex items-center justify-between">
-              Up Next
-              <ChevronRight size={20} className="text-gray-500" />
-            </h2>
+          {/* --- Recommended Sidebar with Logos --- */}
+          <div className="w-full lg:w-[400px] shrink-0">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-8 w-1 bg-purple-600 rounded-full" />
+              <h2 className="text-xl font-black italic tracking-tight">RECOMMENDED</h2>
+            </div>
             
-            <div className="flex flex-col gap-4">
-              {recommendations.map((item, idx) => (
+            <div className="grid grid-cols-1 gap-3">
+              {recommendations.map((item) => (
                 <Link 
-                  to={`/watch/${idx}`} 
-                  key={idx} 
-                  className="group flex gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
+                  to={`/watch/${item.originalId}`} 
+                  key={item.originalId} 
+                  className="group flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-purple-500/30 transition-all"
                 >
-                  <div className="w-32 aspect-video bg-zinc-800 rounded-lg overflow-hidden flex-shrink-0 relative">
-                    <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors" />
-                    <div className="absolute bottom-1 right-1 bg-black/80 text-[10px] px-1 rounded">LIVE</div>
+                  {/* Recommendation Thumbnail / Logo */}
+                  <div className="w-24 h-16 bg-zinc-900 rounded-xl overflow-hidden flex-shrink-0 relative border border-white/5 p-2 flex items-center justify-center">
+                    <img 
+                      src={item.logo} 
+                      alt="" 
+                      className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                      onError={(e) => { e.target.src = "https://placehold.co/100x100/111/fff?text=TV"; }}
+                    />
+                    {/* Play Overlay */}
+                    <div className="absolute inset-0 bg-purple-600/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                       <Play size={16} fill="white" className="text-white" />
+                    </div>
                   </div>
+
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm text-gray-200 group-hover:text-purple-400 transition-colors line-clamp-2">
+                    <h4 className="font-bold text-sm text-zinc-200 group-hover:text-purple-400 transition-colors truncate">
                       {item.name}
                     </h4>
-                    <p className="text-xs text-gray-500 mt-1">Global Broadcast</p>
-                    <p className="text-[10px] text-gray-600 mt-1 flex items-center gap-1">
-                      <Users size={10} /> 1.2k
+                    <p className="text-[10px] text-zinc-500 font-bold uppercase mt-1">
+                      {item.group}
                     </p>
                   </div>
                 </Link>
