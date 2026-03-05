@@ -1,12 +1,21 @@
-import { Link } from "react-router-dom";
-
-export default function ChannelCard({ channel, index }) {
+// components/ChannelCard.jsx
+export default function ChannelCard({ channel }) {
   return (
-    <Link to={`/watch/${index}`}>
-      <div className="border p-4 rounded-lg hover:shadow-lg hover:border-red-500 transition mb-4">
-        <h2 className="font-bold text-lg">{channel.name}</h2>
-        <p className="text-sm text-gray-400">{channel.type.toUpperCase()}</p>
+    <div className="group bg-zinc-900 rounded-2xl overflow-hidden border border-white/5 hover:border-purple-500/50 transition-all">
+      <div className="aspect-video relative overflow-hidden">
+        <img 
+          src={channel.thumbnail} 
+          alt={channel.name} 
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div className="absolute top-2 right-2 bg-black/60 px-2 py-1 rounded text-[10px] font-bold">
+          {channel.quality}
+        </div>
       </div>
-    </Link>
+      <div className="p-4">
+        <h3 className="font-bold truncate">{channel.name}</h3>
+        <p className="text-xs text-gray-500 uppercase mt-1">{channel.type}</p>
+      </div>
+    </div>
   );
 }
