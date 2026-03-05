@@ -68,7 +68,7 @@ export default function Watch() {
                 <div className="flex gap-5">
                   <div className="hidden sm:flex w-16 h-16 bg-white/5 rounded-2xl border border-white/10 items-center justify-center p-3 shrink-0">
                     <img
-                      src={channel.logo}
+                      src={channel.thumbnail}
                       alt=""
                       className="max-w-full max-h-full object-contain"
                     />
