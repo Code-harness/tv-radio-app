@@ -4,9 +4,9 @@ const router = express.Router();
 router.get("/", (req, res) => {
   res.json([
     {
-      name: "BBC News",
+      name: "BTN News",
       type: "tv",
-      stream: "https://example.com/bbc.m3u8"
+      stream: "https://tv.btnrwanda.com:3086/live/btnlive.m3u8"
     },
     {
       name: "Radio Rwanda",
