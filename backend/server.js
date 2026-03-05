@@ -8,6 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("TV + Radio API is running");
+});
+
 app.use("/channels", channelRoutes);
 
 const PORT = 5000;
