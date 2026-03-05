@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Player from "../components/Player";
 import { fetchChannels } from "../services/api";
-import { Share2, Info, Flag, Heart, Users, ChevronRight, Zap, Play } from "lucide-react";
+import { Share2, Heart, Play, ArrowLeft } from "lucide-react";
 
 export default function Watch() {
   const { id } = useParams();
@@ -12,7 +12,6 @@ export default function Watch() {
 
   useEffect(() => {
     fetchChannels().then((data) => {
-      // Mapping persistent IDs
       const dataWithIds = data.map((item, index) => ({
         ...item,
         originalId: index,
@@ -22,117 +21,154 @@ export default function Watch() {
       setChannel(current);
 
       if (current) {
-        // Find channels in the same group (category)
         let related = dataWithIds.filter(
-          (c) => c.group === current.group && c.originalId !== current.originalId
+          (c) =>
+            c.group === current.group && c.originalId !== current.originalId,
         );
 
-        // Fallback: If not enough related, shuffle in others
         if (related.length < 8) {
           const others = dataWithIds.filter((c) => c.group !== current.group);
           related = [...related, ...others.sort(() => 0.5 - Math.random())];
         }
-
-        setRecommendations(related.slice(0, 12));
+        setRecommendations(related.slice(0, 10));
       }
     });
-    
     window.scrollTo(0, 0);
   }, [id]);
 
-  if (!channel) return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
+  if (!channel)
+    return (
+      <div className="min-h-screen bg-[#0a0f1d] flex items-center justify-center">
+        <div className="w-10 h-10 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white selection:bg-purple-500/30">
+    <div className="min-h-screen bg-[#0a0f1d] text-white selection:bg-blue-500/30 font-sans">
       <Navbar />
 
-      <main className="pt-24 pb-12 px-4 md:px-8 max-w-[1800px] mx-auto">
-        <div className="flex flex-col lg:flex-row gap-10">
-          
-          {/* --- Main Player --- */}
-          <div className="flex-1">
-            <div className="relative rounded-[2rem] overflow-hidden bg-black shadow-[0_0_50px_-12px_rgba(168,85,247,0.2)] border border-white/5 aspect-video">
+      <main className="pt-24 pb-12 px-4 md:px-8 max-w-[1600px] mx-auto">
+        {/* Back Button Link */}
+        <Link
+          to="/channels"
+          className="inline-flex items-center gap-2 text-xs font-bold text-blue-400/60 hover:text-blue-400 mb-6 transition-colors uppercase tracking-widest"
+        >
+          <ArrowLeft size={14} /> Back to All Channels
+        </Link>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* --- Player Section --- */}
+          <div className="flex-1 min-w-0">
+            <div className="rounded-3xl overflow-hidden bg-black border border-white/5 shadow-2xl aspect-video">
               <Player url={channel.stream} />
             </div>
 
             <div className="mt-8">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-6">
-                  {/* Channel Logo in Main View */}
-                  <div className="hidden sm:flex w-20 h-20 bg-zinc-900 rounded-2xl border border-white/10 items-center justify-center p-3 shrink-0">
-                    <img src={channel.logo} alt="" className="max-w-full max-h-full object-contain" />
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 border-b border-white/5 pb-8">
+                <div className="flex gap-5">
+                  <div className="hidden sm:flex w-16 h-16 bg-white/5 rounded-2xl border border-white/10 items-center justify-center p-3 shrink-0">
+                    <img
+                      src={channel.logo}
+                      alt=""
+                      className="max-w-full max-h-full object-contain"
+                    />
                   </div>
                   <div>
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="flex items-center gap-1 bg-red-600 text-[10px] font-black px-2 py-0.5 rounded uppercase">
+                      <span className="bg-red-600 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-tighter">
                         Live
                       </span>
-                      <span className="text-purple-400 text-xs font-bold uppercase tracking-widest">{channel.group}</span>
+                      <span className="text-blue-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+                        {channel.group}
+                      </span>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-black tracking-tighter italic uppercase">{channel.name}</h1>
+                    <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-white">
+                      {channel.name}
+                    </h1>
+                    <p className="text-blue-100/40 text-sm mt-2 font-medium">
+                      Global Network Broadcast
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <button className="p-4 bg-zinc-900 rounded-2xl border border-white/5 hover:bg-zinc-800 transition-all">
-                    <Heart size={20} />
+                <div className="flex items-center gap-2">
+                  <button className="p-3 bg-white/5 rounded-xl border border-white/5 hover:bg-white/10 transition-all text-blue-100/60">
+                    <Heart size={18} />
                   </button>
-                  <button className="flex items-center gap-2 bg-white text-black px-6 py-4 rounded-2xl font-black text-sm hover:scale-105 transition-all">
-                    <Share2 size={18} /> SHARE
+                  <button className="flex items-center gap-2 bg-blue-600 text-white px-5 py-3 rounded-xl font-bold text-sm hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/10">
+                    <Share2 size={16} /> Share
                   </button>
                 </div>
               </div>
 
-              <div className="mt-10 p-1 bg-gradient-to-r from-white/10 to-transparent rounded-[2.5rem]">
-                <div className="bg-[#0a0a0a] p-8 rounded-[2.4rem]">
-                   <h3 className="text-xs font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Broadcast Details</h3>
-                   <p className="text-zinc-400 text-lg leading-relaxed">
-                     You are currently watching <span className="text-white font-bold">{channel.name}</span>. 
-                     This stream is sourced via the <span className="text-purple-500">{channel.group}</span> network. 
-                     Experience ad-free, open-source streaming at its best.
-                   </p>
+              {/* Description Box */}
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-3">
+                    About Stream
+                  </h3>
+                  <p className="text-blue-100/60 text-sm leading-relaxed">
+                    Streaming{" "}
+                    <span className="text-white font-semibold">
+                      {channel.name}
+                    </span>{" "}
+                    in high definition. Broadcasted via {channel.group}{" "}
+                    category. This open-source player provides zero-tracking and
+                    ultra-low latency.
+                  </p>
+                </div>
+                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                  <h3 className="text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-3">
+                    Technical Info
+                  </h3>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-blue-100/30">Protocol</span>
+                      <span className="text-blue-100/80">HLS / m3u8</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-blue-100/30">Source</span>
+                      <span className="text-blue-100/80">Encrypted</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* --- Recommended Sidebar with Logos --- */}
-          <div className="w-full lg:w-[400px] shrink-0">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-8 w-1 bg-purple-600 rounded-full" />
-              <h2 className="text-xl font-black italic tracking-tight">RECOMMENDED</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-3">
+          {/* --- Recommendations Sidebar --- */}
+          <div className="w-full lg:w-[380px] shrink-0">
+            <h2 className="text-sm font-bold tracking-[0.2em] text-blue-100/30 uppercase mb-6">
+              Up Next
+            </h2>
+
+            <div className="flex flex-col gap-3">
               {recommendations.map((item) => (
-                <Link 
-                  to={`/watch/${item.originalId}`} 
-                  key={item.originalId} 
-                  className="group flex items-center gap-4 p-3 rounded-2xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.05] hover:border-purple-500/30 transition-all"
+                <Link
+                  to={`/watch/${item.originalId}`}
+                  key={item.originalId}
+                  className="group flex items-center gap-4 p-2 rounded-2xl border border-transparent hover:bg-white/[0.03] hover:border-white/5 transition-all"
                 >
-                  {/* Recommendation Thumbnail / Logo */}
-                  <div className="w-24 h-16 bg-zinc-900 rounded-xl overflow-hidden flex-shrink-0 relative border border-white/5 p-2 flex items-center justify-center">
-                    <img 
-                      src={item.thumbnail} 
-                      alt="" 
-                      className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform duration-500"
-                      onError={(e) => { e.target.src = "https://placehold.co/100x100/111/fff?text=TV"; }}
+                  <div className="w-28 h-16 bg-[#080c17] rounded-xl overflow-hidden flex-shrink-0 relative border border-white/5 p-2 flex items-center justify-center">
+                    <img
+                      src={item.thumbnail}
+                      alt=""
+                      className="max-w-full max-h-full object-contain opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                      onError={(e) => {
+                        e.target.src =
+                          "https://placehold.co/100x100/0a0f1d/333?text=TV";
+                      }}
                     />
-                    {/* Play Overlay */}
-                    <div className="absolute inset-0 bg-purple-600/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                       <Play size={16} fill="white" className="text-white" />
+                    <div className="absolute inset-0 bg-blue-600/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                      <Play size={14} fill="white" className="text-white" />
                     </div>
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm text-zinc-200 group-hover:text-purple-400 transition-colors truncate">
+                    <h4 className="font-bold text-sm text-blue-100 group-hover:text-blue-400 transition-colors truncate">
                       {item.name}
                     </h4>
-                    <p className="text-[10px] text-zinc-500 font-bold uppercase mt-1">
+                    <p className="text-[9px] text-blue-100/30 font-bold uppercase tracking-tight mt-1">
                       {item.group}
                     </p>
                   </div>
@@ -140,7 +176,6 @@ export default function Watch() {
               ))}
             </div>
           </div>
-
         </div>
       </main>
     </div>
