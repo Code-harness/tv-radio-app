@@ -6,6 +6,7 @@ router.get("/", (req, res) => {
     {
       name: "BTN News",
       type: "tv",
+      thumbnail: "https://rba.co.rw/admin/user_data/profile/bc6ba.jpg",
       stream: "https://tv.btnrwanda.com:3086/live/btnlive.m3u8"
     },
     {
