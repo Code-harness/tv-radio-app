@@ -12,7 +12,7 @@ import {
   Zap,
   Activity,
   Globe,
-  Monitor
+  Monitor,
 } from "lucide-react";
 
 export default function Home() {
@@ -21,9 +21,9 @@ export default function Home() {
 
   useEffect(() => {
     fetchChannels().then((data) => {
-      const shuffled = [...data]
-        .map((channel, index) => ({ ...channel, originalId: index }))
-        .sort(() => 0.5 - Math.random());
+      // Shuffle channels randomly
+      const shuffled = [...data].sort(() => 0.5 - Math.random());
+      // Pick first 5 for featured
       setFeatured(shuffled.slice(0, 5));
     });
   }, []);
@@ -34,9 +34,8 @@ export default function Home() {
 
       {/* --- Aesthetic Hero Section --- */}
       <section className="relative min-h-[85vh] flex items-center justify-center px-6 overflow-hidden pt-20">
-        
         {/* Background Image */}
-        <div 
+        <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
           style={{ backgroundImage: `url('/bg-hero.avif')` }}
         />
@@ -57,7 +56,8 @@ export default function Home() {
           </h1>
 
           <p className="max-w-xl mx-auto text-blue-100/40 text-sm md:text-lg mb-10 leading-relaxed font-bold uppercase tracking-widest">
-            Advanced open-source streaming infrastructure. High-fidelity TV and Radio delivered with zero tracking.
+            Advanced open-source streaming infrastructure. High-fidelity TV and
+            Radio delivered with zero tracking.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
@@ -83,10 +83,22 @@ export default function Home() {
       {/* --- Telemetry Stats (Modern Grid) --- */}
       <section className="relative z-10 py-12 border-y border-white/5 bg-white/[0.02]">
         <div className="max-w-[1600px] mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-px bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-          <StatItem icon={<Monitor size={18} />} value="30K+" label="Active Streams" />
-          <StatItem icon={<Globe size={18} />} value="GLOBAL" label="Coverage" />
+          <StatItem
+            icon={<Monitor size={18} />}
+            value="30K+"
+            label="Active Streams"
+          />
+          <StatItem
+            icon={<Globe size={18} />}
+            value="GLOBAL"
+            label="Coverage"
+          />
           <StatItem icon={<Zap size={18} />} value="99.9%" label="Uptime" />
-          <StatItem icon={<Shield size={18} />} value="SAFE" label="Zero Trackers" />
+          <StatItem
+            icon={<Shield size={18} />}
+            value="SAFE"
+            label="Zero Trackers"
+          />
         </div>
       </section>
 
@@ -98,42 +110,58 @@ export default function Home() {
               <div className="flex items-center gap-2 text-blue-500 font-black text-[10px] uppercase tracking-[0.3em]">
                 <Activity size={14} /> System Scan
               </div>
-              <h2 className="text-3xl font-black uppercase tracking-tighter">Live Discovery</h2>
+              <h2 className="text-3xl font-black uppercase tracking-tighter">
+                Live Discovery
+              </h2>
             </div>
             <Link
               to="/channels"
               className="hidden sm:flex items-center gap-2 text-[10px] font-black text-white/20 hover:text-blue-500 transition-all group uppercase tracking-[0.3em]"
             >
-              Full Directory <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              Full Directory{" "}
+              <ArrowRight
+                size={14}
+                className="group-hover:translate-x-1 transition-transform"
+              />
             </Link>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {featured.length > 0 ? featured.map((channel) => (
-              <Link
-                to={`/watch/${channel.originalId}`}
-                key={channel.originalId}
-                className="group p-3 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/[0.04] transition-all hover:border-blue-500/30"
-              >
-                <div className="aspect-video bg-black rounded-xl mb-4 overflow-hidden relative">
-                  <img
-                    src={channel.thumbnail}
-                    alt={channel.name}
-                    className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
-                    onError={(e) => { e.target.src = "https://placehold.co/400x225/0a0f1d/333?text=STREAM"; }}
+            {featured.length > 0
+              ? featured.map((channel) => (
+                  <Link
+                    to={`/watch/${channel.slug}`}
+                    key={channel.slug}
+                    className="group p-3 bg-white/[0.02] border border-white/5 rounded-2xl hover:bg-white/[0.04] transition-all hover:border-blue-500/30"
+                  >
+                    <div className="aspect-video bg-black rounded-xl mb-4 overflow-hidden relative">
+                      <img
+                        src={channel.thumbnail}
+                        alt={channel.name}
+                        className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-all duration-700 group-hover:scale-105"
+                        onError={(e) => {
+                          e.target.src =
+                            "https://placehold.co/400x225/0a0f1d/333?text=STREAM";
+                        }}
+                      />
+                      <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-600 text-[8px] font-black uppercase tracking-tighter rounded">
+                        Live
+                      </div>
+                    </div>
+                    <h3 className="text-[11px] font-black uppercase tracking-widest text-blue-50/80 group-hover:text-blue-400 truncate">
+                      {channel.name}
+                    </h3>
+                    <p className="text-[9px] text-white/20 font-bold uppercase tracking-tight mt-1">
+                      {channel.group}
+                    </p>
+                  </Link>
+                ))
+              : [...Array(5)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="aspect-video bg-white/5 animate-pulse rounded-2xl border border-white/5"
                   />
-                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-red-600 text-[8px] font-black uppercase tracking-tighter rounded">Live</div>
-                </div>
-                <h3 className="text-[11px] font-black uppercase tracking-widest text-blue-50/80 group-hover:text-blue-400 truncate">
-                  {channel.name}
-                </h3>
-                <p className="text-[9px] text-white/20 font-bold uppercase tracking-tight mt-1">
-                  {channel.group}
-                </p>
-              </Link>
-            )) : [...Array(5)].map((_, i) => (
-              <div key={i} className="aspect-video bg-white/5 animate-pulse rounded-2xl border border-white/5" />
-            ))}
+                ))}
           </div>
         </div>
       </section>
@@ -168,7 +196,9 @@ function StatItem({ icon, value, label }) {
   return (
     <div className="flex flex-col items-center justify-center text-center p-8 bg-[#0a0f1d]">
       <div className="text-blue-500/40 mb-3">{icon}</div>
-      <div className="text-xl font-black uppercase tracking-tighter">{value}</div>
+      <div className="text-xl font-black uppercase tracking-tighter">
+        {value}
+      </div>
       <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest mt-1">
         {label}
       </div>
