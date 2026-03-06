@@ -39,7 +39,7 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col text-left">
               <span className="text-lg font-bold tracking-tighter leading-none text-white">
-                TELERADIO
+                TELE-RADIO
               </span>
               {/* <span className="text-[10px] font-bold text-blue-400 tracking-[0.2em] uppercase mt-0.5">
                 Project
