@@ -50,7 +50,7 @@ export default function Navbar() {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-10">
             <NavLink to="/channels" label="TV Channels" />
-            <NavLink to="/radio" label="Radio Stations" />
+            <NavLink to="/radios" label="Radio Stations" />
             <div className="h-4 w-[1px] bg-white/10" />
             <a 
               href={repoUrl}

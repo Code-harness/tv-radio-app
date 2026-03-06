@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Channels from "./pages/Channels";
 import Watch from "./pages/Watch";
+import Radio from "./pages/Radio";
 
 function App() {
   return (
@@ -13,7 +14,10 @@ function App() {
         {/* Channels list page */}
         <Route path="/channels" element={<Channels />} />
 
-        {/* Watch page (TV or Radio) */}
+        {/* Radio Page */}
+        <Route path="/radios" element={<Radio />} />
+
+        {/* Watch page (TV ) */}
         <Route path="/watch/:id" element={<Watch />} />
       </Routes>
     </BrowserRouter>
