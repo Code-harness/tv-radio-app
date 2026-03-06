@@ -39,7 +39,7 @@ export default function Navbar() {
             </div>
             <div className="flex flex-col text-left">
               <span className="text-lg font-bold tracking-tighter leading-none text-white">
-                TV + RADIO
+                TELERADIO
               </span>
               {/* <span className="text-[10px] font-bold text-blue-400 tracking-[0.2em] uppercase mt-0.5">
                 Project
@@ -59,7 +59,7 @@ export default function Navbar() {
               className="text-sm font-bold text-blue-100/40 hover:text-white transition-colors flex items-center gap-2"
             >
               <Github size={18} />
-              <span>V 0.1.0</span>
+              <span>V 1.0.0</span>
             </a>
           </div>
 

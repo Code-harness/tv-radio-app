@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import Navbar from "../components/Navbar";
 import ChannelCard from "../components/ChannelCard";
 import { fetchChannels } from "../services/api";
-import { Search, ChevronDown, LayoutGrid, Radio, Tv } from "lucide-react";
+import { Search, ChevronDown, Radio, Activity } from "lucide-react";
 import Footer from "../components/Footer";
 
 export default function Channels() {
@@ -14,17 +14,15 @@ export default function Channels() {
 
   useEffect(() => {
     fetchChannels().then((data) => {
-      // FIX: Assign a persistent originalIndex so filtering doesn't break routing
       const dataWithIds = data.map((channel, index) => ({
         ...channel,
-        originalId: index, // This stays the same even when filtered
+        originalId: index,
       }));
       setAllChannels(dataWithIds);
       setLoading(false);
     });
   }, []);
 
-  // Optimized Filtering logic
   const filteredChannels = useMemo(() => {
     return allChannels.filter((c) => {
       const matchesSearch = c.name
@@ -39,108 +37,103 @@ export default function Channels() {
   const hasMore = visibleCount < filteredChannels.length;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28">
+    <div className="min-h-screen bg-[#050505] text-white pt-24 font-sans selection:bg-white/20">
       <Navbar />
 
       <div className="max-w-[1600px] mx-auto px-6">
-        {/* --- Modern Header Section --- */}
-        <div className="flex flex-col space-y-8 mb-12">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div>
-              <h1 className="text-5xl font-black tracking-tighter mb-2 bg-gradient-to-r from-white via-white to-zinc-600 bg-clip-text text-transparent">
-                EXPLORE CONTENT
+        {/* --- Minimal Header Section --- */}
+        <div className="flex flex-col border-b border-white/5 pb-8 mb-10">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-black tracking-tight text-white uppercase">
+                Explore Channels
               </h1>
-              <p className="text-zinc-500 font-medium uppercase tracking-[0.2em] text-xs">
-                {filteredChannels.length} Streams Verified & Online
+              <p className="text-zinc-500 font-bold uppercase tracking-widest text-[10px]">
+                {filteredChannels.length} Verified Channels
               </p>
             </div>
 
-            {/* Glassmorphic Search */}
-            <div className="relative w-full md:w-96 group">
-              <div className="absolute -inset-0.5 bg-purple-500/20 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition duration-500"></div>
-              <div className="relative">
-                <Search
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-purple-500"
-                  size={20}
-                />
-                <input
-                  type="text"
-                  placeholder="Search channel or category..."
-                  className="w-full bg-zinc-900/50 border border-white/5 backdrop-blur-md rounded-2xl py-4 pl-12 pr-4 outline-none focus:border-purple-500/50 transition-all"
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setVisibleCount(50); // Reset pagination on search
-                  }}
-                />
-              </div>
+            {/* Sharp Search Bar (No Purple, No Gradients) */}
+            <div className="relative w-full md:w-[400px]">
+              <Search
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-600"
+                size={18}
+              />
+              <input
+                type="text"
+                placeholder="SEARCH CHANNELS..."
+                className="w-full bg-zinc-900/40 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 outline-none focus:border-white/20 text-xs font-bold uppercase tracking-widest transition-all"
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setVisibleCount(50);
+                }}
+              />
             </div>
           </div>
+        </div>
 
-          {/* --- Category Quick-Filters --- */}
-          <div className="flex items-center gap-3 overflow-x-auto pb-2 no-scrollbar">
-            {["All", "Entertainment", "Movies", "News", "Sports", "Music"].map(
-              (tab) => (
-                <button
-                  key={tab}
-                  onClick={() => {
-                    setActiveTab(tab);
-                    setVisibleCount(50);
-                  }}
-                  className={`px-6 py-2 rounded-full border text-sm font-bold transition-all whitespace-nowrap ${
-                    activeTab === tab
-                      ? "bg-white text-black border-white"
-                      : "bg-transparent border-white/10 text-zinc-400 hover:border-white/30"
-                  }`}
-                >
-                  {tab}
-                </button>
-              ),
-            )}
-          </div>
+        {/* --- Category Quick-Filters --- */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-6 mb-8 no-scrollbar border-b border-white/5">
+          {["All", "Entertainment", "Movies", "News", "Sports", "Music"].map(
+            (tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setActiveTab(tab);
+                  setVisibleCount(50);
+                }}
+                className={`px-5 py-2.5 rounded-lg border text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${
+                  activeTab === tab
+                    ? "bg-white text-black border-white"
+                    : "bg-transparent border-white/5 text-zinc-500 hover:text-white hover:border-white/20"
+                }`}
+              >
+                {tab}
+              </button>
+            )
+          )}
         </div>
 
         {/* --- Grid Layout --- */}
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {[...Array(10)].map((_, i) => (
               <div
                 key={i}
-                className="aspect-video bg-zinc-900 animate-pulse rounded-2xl"
+                className="aspect-video bg-zinc-900/50 border border-white/5 rounded-xl animate-pulse"
               />
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-12">
             {visibleChannels.map((channel) => (
               <ChannelCard
                 key={channel.originalId}
                 channel={channel}
-                index={channel.originalId} // Pass the original persistent ID
+                index={channel.originalId}
               />
             ))}
           </div>
         )}
 
-        {/* --- Modern Load More --- */}
+        {/* --- Modern Load More (Button matches project style) --- */}
         {hasMore && (
-          <div className="flex flex-col items-center justify-center mt-20 mb-32 space-y-4">
+          <div className="flex flex-col items-center justify-center mt-24 mb-32 space-y-6">
             <button
               onClick={() => setVisibleCount((prev) => prev + 50)}
-              className="group flex items-center gap-3 px-10 py-4 bg-zinc-900 border border-white/10 rounded-2xl hover:bg-white hover:text-black transition-all duration-300 font-bold"
+              className="group flex items-center gap-4 px-12 py-4 bg-white text-black rounded-xl hover:bg-zinc-200 transition-all duration-300 font-black text-xs uppercase tracking-[0.2em]"
             >
-              Show More Streams
+              Load More
               <ChevronDown
-                size={20}
+                size={16}
                 className="group-hover:translate-y-1 transition-transform"
               />
             </button>
-            <p className="text-zinc-600 text-xs uppercase tracking-widest">
-              Viewing {visibleChannels.length} of {filteredChannels.length}
-            </p>
+            <div className="h-[1px] w-24 bg-white/10" />
           </div>
         )}
       </div>
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 }
