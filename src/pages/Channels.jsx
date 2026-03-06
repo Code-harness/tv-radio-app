@@ -13,14 +13,12 @@ export default function Channels() {
   const [activeTab, setActiveTab] = useState("All");
 
   useEffect(() => {
-    fetchChannels().then((data) => {
-      const dataWithIds = data.map((channel, index) => ({
-        ...channel,
-        originalId: index,
-      }));
-      setAllChannels(dataWithIds);
-      setLoading(false);
-    });
+    fetchChannels()
+      .then((data) => {
+        setAllChannels(data);
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
   }, []);
 
   const filteredChannels = useMemo(() => {
@@ -108,9 +106,9 @@ export default function Channels() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-12">
             {visibleChannels.map((channel) => (
               <ChannelCard
-                key={channel.originalId}
+                key={channel.slug}
                 channel={channel}
-                index={channel.originalId}
+                index={channel.slug}
               />
             ))}
           </div>

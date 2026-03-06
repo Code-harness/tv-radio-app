@@ -9,32 +9,33 @@ export default function Watch() {
   const { id } = useParams();
   const [channel, setChannel] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
+  const { slug } = useParams(); // get slug from URL
 
   useEffect(() => {
     fetchChannels().then((data) => {
-      const dataWithIds = data.map((item, index) => ({
-        ...item,
-        originalId: index,
-      }));
-
-      const current = dataWithIds.find((c) => c.originalId.toString() === id);
+      // Find the current channel by slug
+      const current = data.find((c) => c.slug === slug);
       setChannel(current);
 
       if (current) {
-        let related = dataWithIds.filter(
-          (c) =>
-            c.group === current.group && c.originalId !== current.originalId,
+        // Related channels: same group, excluding current
+        let related = data.filter(
+          (c) => c.group === current.group && c.slug !== current.slug,
         );
 
+        // If less than 8, fill with random others from different groups
         if (related.length < 8) {
-          const others = dataWithIds.filter((c) => c.group !== current.group);
+          const others = data.filter((c) => c.group !== current.group);
           related = [...related, ...others.sort(() => 0.5 - Math.random())];
         }
+
+        // Take first 10 recommendations
         setRecommendations(related.slice(0, 10));
       }
     });
+
     window.scrollTo(0, 0);
-  }, [id]);
+  }, [slug]);
 
   if (!channel)
     return (
@@ -145,8 +146,8 @@ export default function Watch() {
             <div className="flex flex-col gap-3">
               {recommendations.map((item) => (
                 <Link
-                  to={`/watch/${item.originalId}`}
-                  key={item.originalId}
+                  to={`/watch/${item.slug}`}
+                  key={item.slug}
                   className="group flex items-center gap-4 p-2 rounded-2xl border border-transparent hover:bg-white/[0.03] hover:border-white/5 transition-all"
                 >
                   <div className="w-28 h-16 bg-[#080c17] rounded-xl overflow-hidden flex-shrink-0 relative border border-white/5 p-2 flex items-center justify-center">

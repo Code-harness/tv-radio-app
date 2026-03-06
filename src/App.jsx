@@ -18,7 +18,7 @@ function App() {
         <Route path="/radios" element={<Radio />} />
 
         {/* Watch page (TV ) */}
-        <Route path="/watch/:id" element={<Watch />} />
+        <Route path="/watch/:slug" element={<Watch />} />
       </Routes>
     </BrowserRouter>
   );
