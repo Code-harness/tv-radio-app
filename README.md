@@ -1,8 +1,8 @@
 # ⚡ TeleRadio
 
-**Voltstream** is a high-performance, open-source streaming directory for global TV and Radio stations. Built with a focus on privacy, speed, and a premium "Midnight Navy" aesthetic.
+**Tel-Radio** is a high-performance, open-source streaming directory for global TV and Radio stations. Built with a focus on privacy, speed, and a premium "Midnight Navy" aesthetic.
 
-![Version](https://img.shields.io/badge/version-2.0.4-blue?style=flat-square)
+![Version](https://img.shields.io/badge/version-1.0.0-blue?style=flat-square)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 ![React](https://img.shields.io/badge/React-18-blue?style=flat-square)
 
